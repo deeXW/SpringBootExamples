@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
  * @author yanpenglei
  * @create 2018-02-01 18:09
  **/
-@Component
+//@Component
 public class Producer {
 
     /**
@@ -29,7 +29,13 @@ public class Producer {
     @Value("${apache.rocketmq.namesrvAddr}")
     private String namesrvAddr;
 
-    @PostConstruct
+    /**
+     * NameServer地址
+     */
+    @Value("${apache.rocketmq.topic}")
+    private String topic;
+
+//    @PostConstruct
     public void defaultMQProducer() {
 
         //生产者的组名
@@ -46,14 +52,14 @@ public class Producer {
              */
             producer.start();
 
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 10; i++) {
 
                 String messageBody = "我是消息内容:" + i;
 
                 String message = new String(messageBody.getBytes(), "utf-8");
 
                 //构建消息
-                Message msg = new Message("PushTopic" /* PushTopic */, "push"/* Tag  */, "key_" + i /* Keys */, message.getBytes());
+                Message msg = new Message(topic, "*", "key_" + i /* Keys */, message.getBytes());
 
                 //发送消息
                 SendResult result = producer.send(msg);

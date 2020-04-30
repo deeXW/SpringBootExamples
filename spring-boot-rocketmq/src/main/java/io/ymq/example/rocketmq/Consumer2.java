@@ -19,7 +19,7 @@ import java.util.List;
  * @create 2018-02-01 18:11
  **/
 //@Component
-public class Consumer {
+public class Consumer2 {
 
     /**
      * 消费者的组名
@@ -65,7 +65,7 @@ public class Consumer {
 
                             String messageBody = new String(messageExt.getBody(), "utf-8");
 
-                            String tag = "c1";
+                            String tag = "c2";
                             System.out.println(tag+ " 消费响应：Msg: " + messageExt.getMsgId() + ",msgBody: " + messageBody);//输出消息内容
 
                         }

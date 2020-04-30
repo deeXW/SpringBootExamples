@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+    <!--日志输出规范
+        1、日志统一输出到/opt/logs/{app.name}目录下
+        2、日志输出分类
+            应用日志       application.log
+            应用DEBUG日志  application_debug.log
+            错误告警日志   alert_monitor.log
+            耗时日志      longtime.log
+            业务监控日志   biz_monitor.log
+        3、注意严格按照要求输出日志，运维只会采集应用日志、错误告警日志、耗时日志、业务监控日志志到ELK中，其它的日志文件一律不采集。
+          谨慎输出日志，生产环境禁止输出DEBUG日志，有选择输出INFO日志，注意日志输出量的问题，避免把服务器磁盘撑爆（刚上线项目可以适当调整）
+        4、${app.name}不用替换，在启动脚本中会将应用目录名称带进去替换掉。
+    -->
+    <!-- 日志文件保存路徑 ${LOG_HOME}-->
+    <property name="LOG_HOME" value="/opt/logs/rocketMq"/>
+    <!--日志输出格式
+        这里的%X{catRootId}需要保留，如果业务有自己的traceID需要输出，可以配置为：[%X{catRootId}:{traceId}]
+    -->
+    <property name="LOG.PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{catRootId}:%X{traceId}] %-5level %logger{30} - %msg%n"/>
+
+    <!-- 日志文件大小-->
+    <property name="LOG_MAX_SIZE" value="1GB"/>
+
+    <!-- 日志文件保留天数、最多允许占用的磁盘空间-->
+    <property name="LOG_MAX_HISTORY" value="10"/>
+    <property name="LOG_TOTAL_SIZE_CAP" value="10GB"/>
+
+    <!-- DEBUG日志文件保留天数、最多允许占用的磁盘空间-->
+    <property name="DEBUG_LOG_MAX_HISTORY" value="1"/>
+    <property name="DEBUG_LOG_TOTAL_SIZE_CAP" value="10GB"/>
+
+    <property name="MONITOR_LOG_MAX_HISTORY" value="1"/>
+    <property name="MONITOR_LOG_TOTAL_SIZE_CAP" value="2GB"/>
+
+    <!--应用日志，保留LOG_MAX_HISTORY天，最多占用LOG_TOTAL_SIZE_CAP空间-->
+    <!--<appender name="APPLICATION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<File>${LOG_HOME}/application.log</File>-->
+        <!--&lt;!&ndash; 过滤器，只记录级别大于等于INFO的日志 &ndash;&gt;-->
+        <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+            <!--<level>INFO</level>-->
+        <!--</filter>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+            <!--<FileNamePattern>${LOG_HOME}/backup/application.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>-->
+            <!--<maxFileSize>${LOG_MAX_SIZE}</maxFileSize>-->
+            <!--<maxHistory>${LOG_MAX_HISTORY}</maxHistory>-->
+            <!--<totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>-->
+        <!--</rollingPolicy>-->
+        <!--<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+            <!--<pattern>${LOG.PATTERN}</pattern>-->
+            <!--<charset>UTF-8</charset>-->
+        <!--</encoder>-->
+    <!--</appender>-->
+
+    <!--应用DEBUG日志，保留DEBUG_LOG_MAX_HISTORY天，最多占用DEBUG_LOG_TOTAL_SIZE_CAP空间-->
+    <!--<appender name="APPLICATION_DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<File>${LOG_HOME}/application_debug.log</File>-->
+        <!--&lt;!&ndash; 过滤器，记录大于等于DEBUG级别的日志 &ndash;&gt;-->
+        <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+            <!--<level>DEBUG</level>-->
+        <!--</filter>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+            <!--<FileNamePattern>${LOG_HOME}/backup/application_debug.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>-->
+            <!--<maxFileSize>${LOG_MAX_SIZE}</maxFileSize>-->
+            <!--<maxHistory>${DEBUG_LOG_MAX_HISTORY}</maxHistory>-->
+            <!--<totalSizeCap>${DEBUG_LOG_TOTAL_SIZE_CAP}</totalSizeCap>-->
+        <!--</rollingPolicy>-->
+        <!--<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+            <!--<pattern>${LOG.PATTERN}</pattern>-->
+            <!--<charset>UTF-8</charset>-->
+        <!--</encoder>-->
+    <!--</appender>-->
+
+    <!--控制台输出-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG.PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!--告警日志-->
+    <!--<appender name="ALERT_MONITOR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<file>${LOG_HOME}/alert_monitor.log</file>-->
+        <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+            <!--<level>INFO</level>-->
+        <!--</filter>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+            <!--<FileNamePattern>${LOG_HOME}/backup/alert_monitor.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>-->
+            <!--<maxFileSize>${LOG_MAX_SIZE}</maxFileSize>-->
+            <!--<maxHistory>${MONITOR_LOG_MAX_HISTORY}</maxHistory>-->
+            <!--<totalSizeCap>${MONITOR_LOG_TOTAL_SIZE_CAP}</totalSizeCap>-->
+        <!--</rollingPolicy>-->
+        <!--<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+            <!--<pattern>${LOG.PATTERN}</pattern>-->
+            <!--<charset>UTF-8</charset>-->
+        <!--</encoder>-->
+    <!--</appender>-->
+
+    <!--耗时日志-->
+    <!--<appender name="LONG_TIME_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<file>${LOG_HOME}/longtime.log</file>-->
+        <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+            <!--<level>INFO</level>-->
+        <!--</filter>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+            <!--<FileNamePattern>${LOG_HOME}/backup/longtime.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>-->
+            <!--<maxFileSize>${LOG_MAX_SIZE}</maxFileSize>-->
+            <!--<maxHistory>${MONITOR_LOG_MAX_HISTORY}</maxHistory>-->
+            <!--<totalSizeCap>${MONITOR_LOG_TOTAL_SIZE_CAP}</totalSizeCap>-->
+        <!--</rollingPolicy>-->
+        <!--<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+            <!--<pattern>${LOG.PATTERN}</pattern>-->
+            <!--<charset>UTF-8</charset>-->
+        <!--</encoder>-->
+    <!--</appender>-->
+
+    <!--业务监控日志-->
+    <!--<appender name="BIZ_MONITOR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<file>${LOG_HOME}/biz_monitor.log</file>-->
+        <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+            <!--<level>INFO</level>-->
+        <!--</filter>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+            <!--<FileNamePattern>${LOG_HOME}/backup/biz_monitor.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>-->
+            <!--<maxFileSize>${LOG_MAX_SIZE}</maxFileSize>-->
+            <!--<maxHistory>${MONITOR_LOG_MAX_HISTORY}</maxHistory>-->
+            <!--<totalSizeCap>${MONITOR_LOG_TOTAL_SIZE_CAP}</totalSizeCap>-->
+        <!--</rollingPolicy>-->
+        <!--<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+            <!--<pattern>${LOG.PATTERN}</pattern>-->
+            <!--<charset>UTF-8</charset>-->
+        <!--</encoder>-->
+    <!--</appender>-->
+
+
+    <!--默认打开INFO日志-->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
